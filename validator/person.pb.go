@@ -6,7 +6,6 @@ package validator
 import (
 	fmt "fmt"
 	proto "github.com/gogo/protobuf/proto"
-	_ "github.com/maanasasubrahmanyam-sd/go-proto-validators"
 	math "math"
 )
 
