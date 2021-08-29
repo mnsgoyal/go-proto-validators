@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package main;
+import "github.com/maanasasubrahmanyam-sd/go-proto-validators/validator.proto";
+option go_package="./validator";
+
+message Person{
+  string name = 1 [(validator.field) = {alpha: true}];
+  int32 age = 2;
+}
