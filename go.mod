@@ -1,4 +1,4 @@
-module github.com/mwitkow/go-proto-validators
+module github.com/maanasasubrahmanyam-sd/go-proto-validators
 
 go 1.13
 
