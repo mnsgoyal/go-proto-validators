@@ -139,3 +139,18 @@ Basically the magical incantation (apart from includes) is the `--govalidators_o
 ## License
 
 `go-proto-validators` is released under the Apache 2.0 license. See the [LICENSE](LICENSE) file for details.
+
+
+maanasa@Maanasas-MacBook-Air go-proto-validators % go get github.com/gogo/protobuf/protoc-gen-gogo@v1.3.0
+go get: downgraded github.com/gogo/protobuf v1.3.2 => v1.3.0
+maanasa@Maanasas-MacBook-Air go-proto-validators % export PATH="$PATH:$(go env GOPATH)/bin"
+maanasa@Maanasas-MacBook-Air go-proto-validators % GO111MODULE=on PROTOBUF_VERSION=3.10.0 make regenerate
+
+
+export PATH=""/Users/maanasa/go-workspace/src/github.com/maanasasubrahmanyam-sd/go-proto-validators/"deps/bin:/Users/maanasa/go/bin":${PATH}; protoc \
+--proto_path=deps \
+--proto_path=deps/include \
+--proto_path=deps/github.com/gogo/protobuf/protobuf \
+--proto_path=. \
+--gogo_out=Mgoogle/protobuf/descriptor.proto=github.com/gogo/protobuf/protoc-gen-gogo/descriptor:. \
+validator.proto
