@@ -52,6 +52,7 @@ import (
 	"fmt"
 	"os"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -69,6 +70,8 @@ const uuidPattern = "^([a-fA-F0-9]{8}-" +
 	"[%s][a-fA-F0-9]{3}-" +
 	"[8|9|aA|bB][a-fA-F0-9]{3}-" +
 	"[a-fA-F0-9]{12})?$"
+
+const alphaPattern = "^([a-Z)?$"
 
 type plugin struct {
 	*generator.Generator
@@ -258,6 +261,7 @@ func (p *plugin) generateProto2Message(file *generator.FileDescriptor, message *
 		} else if field.IsBytes() {
 			p.generateLengthValidator(variableName, ccTypeName, fieldName, fieldValidator)
 		} else if field.IsMessage() {
+
 			if repeated && nullable {
 				variableName = "*(item)"
 			}
@@ -353,6 +357,11 @@ func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *
 		} else if field.IsBytes() {
 			p.generateLengthValidator(variableName, ccTypeName, fieldName, fieldValidator)
 		} else if field.IsMessage() {
+			if p.validateAlphaRegex(fieldValidator){
+				p.P(`return nil`)
+				p.Out()
+				p.P(`}`)
+			}
 			if p.validatorWithMessageExists(fieldValidator) {
 				if nullable && !repeated {
 					p.P(`if nil == `, variableName, `{`)
@@ -686,4 +695,12 @@ func (p *plugin) validatorWithNonRepeatedConstraint(fv *validator.FieldValidator
 
 func (p *plugin) regexName(ccTypeName string, fieldName string) string {
 	return "_regex_" + ccTypeName + "_" + fieldName
+}
+
+func (p *plugin) validateAlphaRegex(fv *validator.FieldValidator) bool {
+	if fv != nil && fv.Alpha != nil && *fv.Alpha != "" {
+		matched, _ := regexp.MatchString(alphaPattern, *fv.Alpha)
+		return matched
+	}
+	return false
 }
