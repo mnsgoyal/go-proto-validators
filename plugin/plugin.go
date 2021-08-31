@@ -1,51 +1,3 @@
-// Copyright 2016 Michal Witkowski. All Rights Reserved.
-// See LICENSE for licensing terms.
-
-/*
-
-The validator plugin generates a Validate method for each message.
-By default, if none of the message's fields are annotated with the gogo validator annotation, it returns a nil.
-In case some of the fields are annotated, the Validate function returns nil upon sucessful validation, or an error
-describing why the validation failed.
-The Validate method is called recursively for all submessage of the message.
-
-TODO(michal): ADD COMMENTS.
-
-Equal is enabled using the following extensions:
-
-  - equal
-  - equal_all
-
-While VerboseEqual is enable dusing the following extensions:
-
-  - verbose_equal
-  - verbose_equal_all
-
-The equal plugin also generates a test given it is enabled using one of the following extensions:
-
-  - testgen
-  - testgen_all
-
-Let us look at:
-
-  github.com/gogo/protobuf/test/example/example.proto
-
-Btw all the output can be seen at:
-
-  github.com/gogo/protobuf/test/example/*
-
-The following message:
-
-
-
-given to the equal plugin, will generate the following code:
-
-
-
-and the following test code:
-
-
-*/
 package plugin
 
 import (
@@ -291,7 +243,7 @@ func (p *plugin) generateProto2Message(file *generator.FileDescriptor, message *
 
 func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *generator.Descriptor) {
 	ccTypeName := generator.CamelCaseSlice(message.TypeName())
-	p.P(`func (this *`, ccTypeName, `) ValidateAlpha() error {`)
+	p.P(`func (this *`, ccTypeName, `) Validate() error {`)
 	p.In()
 
 	for _, oneof := range message.OneofDecl {
@@ -309,8 +261,9 @@ func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *
 		}
 	}
 	fmt.Fprintf(os.Stderr, "WARNING: Test aplha")
-
+	fmt.Println("message.Field", message.Field)
 	for _, field := range message.Field {
+		fmt.Println("checking",field)
 		fieldValidator := getFieldValidatorIfAny(field)
 		if fieldValidator == nil && !field.IsMessage() {
 			continue
