@@ -358,7 +358,9 @@ func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *
 			p.generateLengthValidator(variableName, ccTypeName, fieldName, fieldValidator)
 		} else if field.IsMessage() {
 			if p.validateAlphaRegex(fieldValidator){
-				p.P(`return nil`)
+				p.P(`if nil == `, variableName, `{`)
+				p.In()
+				p.P(`return `, p.validatorPkg.Use(), `.FieldError("`, fieldName, `",`, p.fmtPkg.Use(), `.Errorf("message must exist"))`)
 				p.Out()
 				p.P(`}`)
 			}
