@@ -291,7 +291,7 @@ func (p *plugin) generateProto2Message(file *generator.FileDescriptor, message *
 
 func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *generator.Descriptor) {
 	ccTypeName := generator.CamelCaseSlice(message.TypeName())
-	p.P(`func (this *`, ccTypeName, `) Validate() error {`)
+	p.P(`func (this *`, ccTypeName, `) ValidateAlpha() error {`)
 	p.In()
 
 	for _, oneof := range message.OneofDecl {
@@ -308,6 +308,8 @@ func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *
 			p.P(`}`)
 		}
 	}
+	fmt.Fprintf(os.Stderr, "WARNING: Test aplha")
+
 	for _, field := range message.Field {
 		fieldValidator := getFieldValidatorIfAny(field)
 		if fieldValidator == nil && !field.IsMessage() {
