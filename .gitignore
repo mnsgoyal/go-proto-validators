@@ -6,6 +6,5 @@
 .vscode
 
 # Build and script artefacts.
-deps/
 bazel-*
 
