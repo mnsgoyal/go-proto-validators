@@ -131,7 +131,7 @@ func (p *plugin) generateRegexVars(file *generator.FileDescriptor, message *gene
 			} else if validator.Regex != nil {
 				p.P(`var `, p.regexName(ccTypeName, fieldName), ` = `, p.regexPkg.Use(), `.MustCompile(`, "`", *validator.Regex, "`", `)`)
 			} else if validator.Alpha != nil {
-				p.P(`var `, p.regexName(ccTypeName, fieldName), ` = `, p.regexPkg.Use(), `.MustCompile(`, "`", *validator.Alpha, "`", `)`)
+				p.P(`var `, p.regexName(ccTypeName, fieldName), ` = `, p.regexPkg.Use(), `.MustCompile(`, "`", alphaPattern, "`", `)`)
 			}
 		}
 	}
