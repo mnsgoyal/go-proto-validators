@@ -518,7 +518,7 @@ func getUUIDRegex(version *int32) (string, error) {
 
 func (p *plugin) generateStringValidator(variableName string, ccTypeName string, fieldName string, fv *validator.FieldValidator) {
 	if fv.Alpha != nil  {
-			_, err := validateAlphaRegex(fv.Alpha)
+			_, err := p.validateAlphaRegex(fv)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "WARNING: field %v.%v error %s.\n", ccTypeName, fieldName, err)
 			}
