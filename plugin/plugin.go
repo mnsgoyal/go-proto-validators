@@ -301,8 +301,16 @@ func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *
 				fmt.Fprintf(os.Stderr, "WARNING: field %v.%v is not repeated, validator.max_elts has no effects\n", ccTypeName, fieldName)
 			}
 		}
-		fmt.Fprintf(os.Stderr, "Maanasa 1", ccTypeName, fieldName, fieldValidator)
+		fmt.Fprintf(os.Stderr, "Maanasa 1", ccTypeName, fieldName, fieldValidator, field)
+		//Maanasa 1%!(EXTRA                        string=SearchRequest, string=Id, *validator.FieldValidator=alpha:"hello" )
 		if field.IsString() {
+			if p.validateAlphaRegex(fieldValidator){
+				p.P(`if nil == `, variableName, `{`)
+				p.In()
+				p.P(`return `, p.validatorPkg.Use(), `.FieldError("`, fieldName, `",`, p.fmtPkg.Use(), `.Errorf("message must exist"))`)
+				p.Out()
+				p.P(`}`)
+			}
 			p.generateStringValidator(variableName, ccTypeName, fieldName, fieldValidator)
 		} else if p.isSupportedInt(field) {
 			p.generateIntValidator(variableName, ccTypeName, fieldName, fieldValidator)
