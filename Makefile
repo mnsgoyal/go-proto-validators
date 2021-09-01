@@ -62,5 +62,5 @@ regenerate: prepare_deps
 		--gogo_out=Mgoogle/protobuf/descriptor.proto=github.com/gogo/protobuf/protoc-gen-gogo/descriptor:. \
 		validator.proto
 
-clean:
-	rm -rf "deps"
+#clean:
+#s	rm -rf "deps"
