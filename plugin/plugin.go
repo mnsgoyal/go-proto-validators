@@ -301,10 +301,15 @@ func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *
 				fmt.Fprintf(os.Stderr, "WARNING: field %v.%v is not repeated, validator.max_elts has no effects\n", ccTypeName, fieldName)
 			}
 		}
-		//fmt.Fprintf(os.Stderr, "Maanasa 1", ccTypeName, fieldName, fieldValidator, field)
-
 		if field.IsString() {
-			fmt.Fprintf(os.Stderr, "Maanasa is string", ccTypeName, fieldName, fieldValidator, field)
+			if p.validateAlphaRegex(fieldValidator){
+				fmt.Fprintf(os.Stderr, "Maanasa regex", ccTypeName, fieldName, fieldValidator, field)
+				p.P(`if nil == `, variableName, `{`)
+				p.In()
+				p.P(`return `, p.validatorPkg.Use(), `.FieldError("`, fieldName, `",`, p.fmtPkg.Use(), `.Errorf("message must exist"))`)
+				p.Out()
+				p.P(`}`)
+			}
 			p.generateStringValidator(variableName, ccTypeName, fieldName, fieldValidator)
 		} else if p.isSupportedInt(field) {
 			p.generateIntValidator(variableName, ccTypeName, fieldName, fieldValidator)
@@ -315,14 +320,7 @@ func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *
 		} else if field.IsBytes() {
 			p.generateLengthValidator(variableName, ccTypeName, fieldName, fieldValidator)
 		} else if field.IsMessage() {
-			fmt.Fprintf(os.Stderr, "Maanasa 2", ccTypeName, fieldName, fieldValidator)
-			if p.validateAlphaRegex(fieldValidator){
-				p.P(`if nil == `, variableName, `{`)
-				p.In()
-				p.P(`return `, p.validatorPkg.Use(), `.FieldError("`, fieldName, `",`, p.fmtPkg.Use(), `.Errorf("message must exist"))`)
-				p.Out()
-				p.P(`}`)
-			}
+
 			if p.validatorWithMessageExists(fieldValidator) {
 				if nullable && !repeated {
 					p.P(`if nil == `, variableName, `{`)
@@ -659,6 +657,7 @@ func (p *plugin) regexName(ccTypeName string, fieldName string) string {
 }
 
 func (p *plugin) validateAlphaRegex(fv *validator.FieldValidator) bool {
+	fmt.Fprintf(os.Stderr, "Maanasa regex value", *fv.Alpha)
 	if fv != nil && fv.Alpha != nil && *fv.Alpha != "" {
 		matched, _ := regexp.MatchString(alphaPattern, *fv.Alpha)
 		return matched
