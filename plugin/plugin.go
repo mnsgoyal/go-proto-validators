@@ -260,10 +260,10 @@ func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *
 			p.P(`}`)
 		}
 	}
-	fmt.Fprintf(os.Stderr, "WARNING: Test aplha")
-	fmt.Println("message.Field", message.Field)
+	//fmt.Fprintf(os.Stderr, "WARNING: Test aplha")
+	//fmt.Println("message.Field", message.Field)
 	for _, field := range message.Field {
-		fmt.Println("checking",field)
+		//fmt.Println("checking",field)
 		fieldValidator := getFieldValidatorIfAny(field)
 		if fieldValidator == nil && !field.IsMessage() {
 			continue
@@ -312,6 +312,7 @@ func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *
 		} else if field.IsBytes() {
 			p.generateLengthValidator(variableName, ccTypeName, fieldName, fieldValidator)
 		} else if field.IsMessage() {
+			fmt.Println("fieldValidator Maanasa", fieldValidator)
 			if p.validateAlphaRegex(fieldValidator){
 				p.P(`if nil == `, variableName, `{`)
 				p.In()
