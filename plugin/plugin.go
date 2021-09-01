@@ -53,13 +53,13 @@ func (p *plugin) Generate(file *generator.FileDescriptor) {
 	p.PluginImports = generator.NewPluginImports(p.Generator)
 	p.regexPkg = p.NewImport("regexp")
 	p.fmtPkg = p.NewImport("fmt")
-	p.validatorPkg = p.NewImport("github.com/maanasasubrahmanyam-sd/go-proto-validators")
+	//p.validatorPkg = p.NewImport("github.com/maanasasubrahmanyam-sd/go-proto-validators")
 
 	for _, msg := range file.Messages() {
 		if msg.DescriptorProto.GetOptions().GetMapEntry() {
 			continue
 		}
-		p.generateRegexVars(file, msg)
+		//p.generateRegexVars(file, msg)
 		if gogoproto.IsProto3(file.FileDescriptorProto) {
 			p.generateProto3Message(file, msg)
 		} else {
