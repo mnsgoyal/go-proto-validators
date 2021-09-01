@@ -59,7 +59,7 @@ func (p *plugin) Generate(file *generator.FileDescriptor) {
 		if msg.DescriptorProto.GetOptions().GetMapEntry() {
 			continue
 		}
-		//p.generateRegexVars(file, msg)
+		p.generateRegexVars(file, msg)
 		if gogoproto.IsProto3(file.FileDescriptorProto) {
 			p.generateProto3Message(file, msg)
 		} else {
