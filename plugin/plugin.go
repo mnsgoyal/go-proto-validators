@@ -302,14 +302,6 @@ func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *
 			}
 		}
 		if field.IsString() {
-			if p.validateAlphaRegex(fieldValidator){
-				fmt.Fprintf(os.Stderr, "Maanasa regex", ccTypeName, fieldName, fieldValidator, field)
-				p.P(`if nil == `, variableName, `{`)
-				p.In()
-				p.P(`return `, p.validatorPkg.Use(), `.FieldError("`, fieldName, `",`, p.fmtPkg.Use(), `.Errorf("message must exist"))`)
-				p.Out()
-				p.P(`}`)
-			}
 			p.generateStringValidator(variableName, ccTypeName, fieldName, fieldValidator)
 		} else if p.isSupportedInt(field) {
 			p.generateIntValidator(variableName, ccTypeName, fieldName, fieldValidator)
@@ -525,6 +517,20 @@ func getUUIDRegex(version *int32) (string, error) {
 }
 
 func (p *plugin) generateStringValidator(variableName string, ccTypeName string, fieldName string, fv *validator.FieldValidator) {
+	if fv.Alpha != nil  {
+			_, err := validateAlphaRegex(fv.Alpha)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "WARNING: field %v.%v error %s.\n", ccTypeName, fieldName, err)
+			}
+		fmt.Fprintf(os.Stderr,"Maanasa inside fun")
+
+		p.P(`if !`, p.regexName(ccTypeName, fieldName), `.MatchString(`, variableName, `) {`)
+		p.In()
+		errorStr := "be a string conforming to regex " + strconv.Quote(fv.GetRegex())
+		p.generateErrorString(variableName, fieldName, errorStr, fv)
+		p.Out()
+		p.P(`}`)
+	}
 	if fv.Regex != nil || fv.UuidVer != nil {
 		if fv.UuidVer != nil {
 			uuid, err := getUUIDRegex(fv.UuidVer)
@@ -656,13 +662,11 @@ func (p *plugin) regexName(ccTypeName string, fieldName string) string {
 	return "_regex_" + ccTypeName + "_" + fieldName
 }
 
-func (p *plugin) validateAlphaRegex(fv *validator.FieldValidator) bool {
-	fmt.Fprintf(os.Stderr, "Maanasa ", *fv.Alpha)
-	//Maanasa regex value%!(EXTRA string=hello)
+func (p *plugin) validateAlphaRegex(fv *validator.FieldValidator) (bool,error) {
 	if fv != nil && fv.Alpha != nil && *fv.Alpha != "" {
 		matched, err := regexp.MatchString(alphaPattern, *fv.Alpha)
 		fmt.Fprintf(os.Stderr, "Maanasa regex value ", matched, *fv.Alpha, err)
-		return matched
+		return matched, err
 	}
-	return false
+	return false,nil
 }
