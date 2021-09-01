@@ -23,7 +23,7 @@ const uuidPattern = "^([a-fA-F0-9]{8}-" +
 	"[8|9|aA|bB][a-fA-F0-9]{3}-" +
 	"[a-fA-F0-9]{12})?$"
 
-const alphaPattern = "^([a-Z)?$"
+const alphaPattern = "^[a-zA-Z]+$"
 
 type plugin struct {
 	*generator.Generator
@@ -657,9 +657,11 @@ func (p *plugin) regexName(ccTypeName string, fieldName string) string {
 }
 
 func (p *plugin) validateAlphaRegex(fv *validator.FieldValidator) bool {
-	fmt.Fprintf(os.Stderr, "Maanasa regex value", *fv.Alpha)
+	fmt.Fprintf(os.Stderr, "Maanasa ", *fv.Alpha)
+	//Maanasa regex value%!(EXTRA string=hello)
 	if fv != nil && fv.Alpha != nil && *fv.Alpha != "" {
-		matched, _ := regexp.MatchString(alphaPattern, *fv.Alpha)
+		matched, err := regexp.MatchString(alphaPattern, *fv.Alpha)
+		fmt.Fprintf(os.Stderr, "Maanasa regex value ", matched, *fv.Alpha, err)
 		return matched
 	}
 	return false
