@@ -118,7 +118,7 @@ func (p *plugin) generateRegexVars(file *generator.FileDescriptor, message *gene
 		validator := getFieldValidatorIfAny(field)
 		if validator != nil {
 			fieldName := p.GetOneOfFieldName(message, field)
-			if validator.Regex != nil && validator.UuidVer != nil {
+			if validator.Regex != nil && validator.UuidVer != nil && validator.Alpha != nil {
 				fmt.Fprintf(os.Stderr, "WARNING: regex and uuid validator is set for field %v.%v, only one of them can be set. Regex and UUID validator is ignored for this field.", ccTypeName, fieldName)
 			} else if validator.UuidVer != nil {
 				uuid, err := getUUIDRegex(validator.UuidVer)
@@ -130,6 +130,8 @@ func (p *plugin) generateRegexVars(file *generator.FileDescriptor, message *gene
 				}
 			} else if validator.Regex != nil {
 				p.P(`var `, p.regexName(ccTypeName, fieldName), ` = `, p.regexPkg.Use(), `.MustCompile(`, "`", *validator.Regex, "`", `)`)
+			} else if validator.Alpha != nil {
+				p.P(`var `, p.regexName(ccTypeName, fieldName), ` = `, p.regexPkg.Use(), `.MustCompile(`, "`", *validator.Alpha, "`", `)`)
 			}
 		}
 	}
