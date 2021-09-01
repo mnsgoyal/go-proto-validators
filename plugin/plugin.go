@@ -312,7 +312,7 @@ func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *
 		} else if field.IsBytes() {
 			p.generateLengthValidator(variableName, ccTypeName, fieldName, fieldValidator)
 		} else if field.IsMessage() {
-			fmt.Println("fieldValidator Maanasa", fieldValidator)
+			fmt.Fprintf(os.Stderr, "Maanasa 1", ccTypeName, fieldName, fieldValidator)
 			if p.validateAlphaRegex(fieldValidator){
 				p.P(`if nil == `, variableName, `{`)
 				p.In()
