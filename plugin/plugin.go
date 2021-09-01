@@ -301,6 +301,7 @@ func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *
 				fmt.Fprintf(os.Stderr, "WARNING: field %v.%v is not repeated, validator.max_elts has no effects\n", ccTypeName, fieldName)
 			}
 		}
+		fmt.Fprintf(os.Stderr, "Maanasa 1", ccTypeName, fieldName, fieldValidator)
 		if field.IsString() {
 			p.generateStringValidator(variableName, ccTypeName, fieldName, fieldValidator)
 		} else if p.isSupportedInt(field) {
@@ -312,7 +313,7 @@ func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *
 		} else if field.IsBytes() {
 			p.generateLengthValidator(variableName, ccTypeName, fieldName, fieldValidator)
 		} else if field.IsMessage() {
-			fmt.Fprintf(os.Stderr, "Maanasa 1", ccTypeName, fieldName, fieldValidator)
+			fmt.Fprintf(os.Stderr, "Maanasa 2", ccTypeName, fieldName, fieldValidator)
 			if p.validateAlphaRegex(fieldValidator){
 				p.P(`if nil == `, variableName, `{`)
 				p.In()
