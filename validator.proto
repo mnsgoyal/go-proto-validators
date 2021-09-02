@@ -20,5 +20,5 @@ extend google.protobuf.FieldOptions {
 }
 
 message FieldValidator {
-  optional string alpha = 1;
+  optional bool alpha = 1;
 }
