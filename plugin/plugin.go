@@ -44,7 +44,7 @@ func (p *plugin) Generate(file *generator.FileDescriptor) {
 	if !p.useGogoImport {
 		vanity.TurnOffGogoImport(file.FileDescriptorProto)
 	}
-	p.PluginImports = generator.NewPluginImports(p.Generator)
+	//p.PluginImports = generator.NewPluginImports(p.Generator)
 	p.regexPkg = p.NewImport("regexp")
 	p.fmtPkg = p.NewImport("fmt")
 	p.validatorPkg = p.NewImport("github.com/maanasasubrahmanyam-sd/go-proto-validators")
@@ -143,7 +143,7 @@ func (p *plugin) generateAlphaValidator(variableName string, ccTypeName string, 
 	if fv.Alpha != nil  {
 		p.P(`if !`, p.regexName(ccTypeName, fieldName), `.MatchString(`, variableName, `) {`)
 		p.In()
-		errorStr := "be a string conforming to alpha regex " + strconv.Quote(defaultPattern)
+		errorStr := "be a string conforming to default regex " + strconv.Quote(defaultPattern)
 		if *fv.Alpha {
 			errorStr = "be a string conforming to alpha regex " + strconv.Quote(alphaPattern)
 		}
