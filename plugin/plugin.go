@@ -16,6 +16,8 @@ import (
 )
 
 const alphaPattern = "^[a-zA-Z]+$"
+const defaultPattern = "^[a-zA-Z0-9]+$"
+
 
 type plugin struct {
 	*generator.Generator
@@ -79,8 +81,10 @@ func (p *plugin) generateRegexVars(file *generator.FileDescriptor, message *gene
 			fieldName := p.GetOneOfFieldName(message, field)
 			if validator.Alpha == nil {
 				fmt.Fprintf(os.Stderr, "WARNING: regex and uuid validator is set for field %v.%v, is null.", ccTypeName, fieldName)
-			} else if validator.Alpha != nil {
+			} else if validator.Alpha != nil && *validator.Alpha {
 				p.P(`var `, p.regexName(ccTypeName, fieldName), ` = `, p.regexPkg.Use(), `.MustCompile(`, "`", alphaPattern, "`", `)`)
+			}else{
+				p.P(`var `, p.regexName(ccTypeName, fieldName), ` = `, p.regexPkg.Use(), `.MustCompile(`, "`", defaultPattern, "`", `)`)
 			}
 		}
 	}
@@ -139,7 +143,10 @@ func (p *plugin) generateAlphaValidator(variableName string, ccTypeName string, 
 	if fv.Alpha != nil  {
 		p.P(`if !`, p.regexName(ccTypeName, fieldName), `.MatchString(`, variableName, `) {`)
 		p.In()
-		errorStr := "be a string conforming to alpha regex " + strconv.Quote(alphaPattern)
+		errorStr := "be a string conforming to alpha regex " + strconv.Quote(defaultPattern)
+		if *fv.Alpha {
+			errorStr = "be a string conforming to alpha regex " + strconv.Quote(alphaPattern)
+		}
 		p.P(`return `, p.validatorPkg.Use(), `.FieldError("`, fieldName, `",`, p.fmtPkg.Use(), ".Errorf(`", errorStr, "`))")
 		p.Out()
 		p.P(`}`)
