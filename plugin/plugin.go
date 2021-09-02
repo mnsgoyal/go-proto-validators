@@ -125,6 +125,7 @@ func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *
 			p.P(`if oneOfNester, ok := this.Get` + oneOfName + `().(* ` + oneOfType + `); ok {`)
 			variableName = "oneOfNester." + p.GetOneOfFieldName(message, field)
 		}
+		fmt.Fprintf(os.Stderr, "maanasa", field.IsBool())
 		if field.IsBool() {
 			p.generateAlphaValidator(variableName, ccTypeName, fieldName, fieldValidator)
 		}
