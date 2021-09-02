@@ -10,8 +10,6 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/gogo/protobuf/protoc-gen-gogo/descriptor"
 	"github.com/gogo/protobuf/protoc-gen-gogo/generator"
-	"github.com/gogo/protobuf/vanity"
-
 	validator "github.com/maanasasubrahmanyam-sd/go-proto-validators"
 )
 
@@ -41,10 +39,10 @@ func (p *plugin) Init(g *generator.Generator) {
 }
 
 func (p *plugin) Generate(file *generator.FileDescriptor) {
-	if !p.useGogoImport {
+	/*if !p.useGogoImport {
 		vanity.TurnOffGogoImport(file.FileDescriptorProto)
-	}
-	//p.PluginImports = generator.NewPluginImports(p.Generator)
+	}*/
+	p.PluginImports = generator.NewPluginImports(p.Generator)
 	p.regexPkg = p.NewImport("regexp")
 	p.fmtPkg = p.NewImport("fmt")
 	p.validatorPkg = p.NewImport("github.com/maanasasubrahmanyam-sd/go-proto-validators")
