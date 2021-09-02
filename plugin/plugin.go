@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"reflect"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -520,12 +519,6 @@ func getUUIDRegex(version *int32) (string, error) {
 
 func (p *plugin) generateStringValidator(variableName string, ccTypeName string, fieldName string, fv *validator.FieldValidator) {
 	if fv.Alpha != nil  {
-			_, err := p.validateAlphaRegex(fv)
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "WARNING: field %v.%v error %s.\n", ccTypeName, fieldName, err)
-			}
-		fmt.Fprintf(os.Stderr,"Maanasa inside fun")
-
 		p.P(`if !`, p.regexName(ccTypeName, fieldName), `.MatchString(`, variableName, `) {`)
 		p.In()
 		errorStr := "be a string conforming to regex " + strconv.Quote(fv.GetRegex())
@@ -662,13 +655,4 @@ func (p *plugin) validatorWithNonRepeatedConstraint(fv *validator.FieldValidator
 
 func (p *plugin) regexName(ccTypeName string, fieldName string) string {
 	return "_regex_" + ccTypeName + "_" + fieldName
-}
-
-func (p *plugin) validateAlphaRegex(fv *validator.FieldValidator) (bool,error) {
-	if fv != nil && fv.Alpha != nil && *fv.Alpha != "" {
-		matched, err := regexp.MatchString(alphaPattern, *fv.Alpha)
-		fmt.Fprintf(os.Stderr, "Maanasa regex value ", matched, *fv.Alpha, err)
-		return matched, err
-	}
-	return false,nil
 }
