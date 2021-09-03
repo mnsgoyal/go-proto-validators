@@ -10,12 +10,12 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/gogo/protobuf/protoc-gen-gogo/descriptor"
 	"github.com/gogo/protobuf/protoc-gen-gogo/generator"
-	"github.com/gogo/protobuf/vanity"
-
 	validator "github.com/maanasasubrahmanyam-sd/go-proto-validators"
 )
 
 const alphaPattern = "^[a-zA-Z]+$"
+const defaultPattern = "^[a-zA-Z0-9]+$"
+
 
 type plugin struct {
 	*generator.Generator
@@ -39,9 +39,9 @@ func (p *plugin) Init(g *generator.Generator) {
 }
 
 func (p *plugin) Generate(file *generator.FileDescriptor) {
-	if !p.useGogoImport {
+	/*if !p.useGogoImport {
 		vanity.TurnOffGogoImport(file.FileDescriptorProto)
-	}
+	}*/
 	p.PluginImports = generator.NewPluginImports(p.Generator)
 	p.regexPkg = p.NewImport("regexp")
 	p.fmtPkg = p.NewImport("fmt")
@@ -79,8 +79,10 @@ func (p *plugin) generateRegexVars(file *generator.FileDescriptor, message *gene
 			fieldName := p.GetOneOfFieldName(message, field)
 			if validator.Alpha == nil {
 				fmt.Fprintf(os.Stderr, "WARNING: regex and uuid validator is set for field %v.%v, is null.", ccTypeName, fieldName)
-			} else if validator.Alpha != nil {
+			} else if validator.Alpha != nil && *validator.Alpha {
 				p.P(`var `, p.regexName(ccTypeName, fieldName), ` = `, p.regexPkg.Use(), `.MustCompile(`, "`", alphaPattern, "`", `)`)
+			}else{
+				p.P(`var `, p.regexName(ccTypeName, fieldName), ` = `, p.regexPkg.Use(), `.MustCompile(`, "`", defaultPattern, "`", `)`)
 			}
 		}
 	}
@@ -126,7 +128,7 @@ func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *
 			variableName = "oneOfNester." + p.GetOneOfFieldName(message, field)
 		}
 		if field.IsString() {
-			p.generateStringValidator(variableName, ccTypeName, fieldName, fieldValidator)
+			p.generateAlphaValidator(variableName, ccTypeName, fieldName, fieldValidator)
 		}
 	}
 	p.P(`return nil`)
@@ -135,12 +137,14 @@ func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *
 }
 
 
-func (p *plugin) generateStringValidator(variableName string, ccTypeName string, fieldName string, fv *validator.FieldValidator) {
+func (p *plugin) generateAlphaValidator(variableName string, ccTypeName string, fieldName string, fv *validator.FieldValidator) {
 	if fv.Alpha != nil  {
 		p.P(`if !`, p.regexName(ccTypeName, fieldName), `.MatchString(`, variableName, `) {`)
 		p.In()
-		errorStr := "be a string conforming to regex " + strconv.Quote(fv.GetAlpha())
-		//p.generateErrorString(variableName, fieldName, errorStr, fv)
+		errorStr := "be a string conforming to default regex " + strconv.Quote(defaultPattern)
+		if *fv.Alpha {
+			errorStr = "be a string conforming to alpha regex " + strconv.Quote(alphaPattern)
+		}
 		p.P(`return `, p.validatorPkg.Use(), `.FieldError("`, fieldName, `",`, p.fmtPkg.Use(), ".Errorf(`", errorStr, "`))")
 		p.Out()
 		p.P(`}`)
@@ -149,28 +153,6 @@ func (p *plugin) generateStringValidator(variableName string, ccTypeName string,
 
 
 func (p *plugin) fieldIsProto3Map(file *generator.FileDescriptor, message *generator.Descriptor, field *descriptor.FieldDescriptorProto) bool {
-	// Context from descriptor.proto
-	// Whether the message is an automatically generated map entry type for the
-	// maps field.
-	//
-	// For maps fields:
-	//     map<KeyType, ValueType> map_field = 1;
-	// The parsed descriptor looks like:
-	//     message MapFieldEntry {
-	//         option map_entry = true;
-	//         optional KeyType key = 1;
-	//         optional ValueType value = 2;
-	//     }
-	//     repeated MapFieldEntry map_field = 1;
-	//
-	// Implementations may choose not to generate the map_entry=true message, but
-	// use a native map in the target language to hold the keys and values.
-	// The reflection APIs in such implementions still need to work as
-	// if the field is a repeated message field.
-	//
-	// NOTE: Do not set the option in .proto files. Always use the maps syntax
-	// instead. The option should only be implicitly set by the proto compiler
-	// parser.
 	if field.GetType() != descriptor.FieldDescriptorProto_TYPE_MESSAGE || !field.IsRepeated() {
 		return false
 	}
