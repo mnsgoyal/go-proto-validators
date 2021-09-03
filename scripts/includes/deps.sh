@@ -30,6 +30,7 @@ function install_protobuf() {
         rm -rf "${version}.zip" "${version}.zip.tmp" "bin" "include"
         wget "https://github.com/google/protobuf/releases/download/v${version}/protoc-${version}-${os_string}-x86_64.zip" -O "${version}.zip.tmp"
         unzip -o "${version}.zip.tmp"
+        echo "unzi done"
         chmod 755 "bin/protoc"
         mv "${version}.zip.tmp" "${version}.zip"
         popd || exit 1
@@ -44,7 +45,7 @@ function setup_proto_deps() {
 
     proto_deps=(
         "github.com/gogo/protobuf"
-        "github.com/golang/protobuf"
+       # "github.com/golang/protobuf"
         "github.com/maanasasubrahmanyam-sd/go-proto-validators"
     )
 
@@ -63,7 +64,7 @@ function setup_proto_deps() {
     done
 
     go install github.com/gogo/protobuf/protoc-gen-gogo
-    go install github.com/golang/protobuf/protoc-gen-go
+    #go install github.com/golang/protobuf/protoc-gen-go
 
     PATH="${GOBIN:-"${HOME}/go/bin"}:${PATH}"
     export PATH
