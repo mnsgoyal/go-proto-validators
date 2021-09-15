@@ -154,3 +154,11 @@ export PATH=""/Users/maanasa/go-workspace/src/github.com/maanasasubrahmanyam-sd/
 --proto_path=. \
 --gogo_out=Mgoogle/protobuf/descriptor.proto=github.com/gogo/protobuf/protoc-gen-gogo/descriptor:. \
 validator.proto
+
+protoc \
+--proto_path=deps \
+--proto_path=deps/include \
+--proto_path=deps/github.com/gogo/protobuf@v1.3.0/protobuf \
+--proto_path=. \
+--gogo_out=Mdescriptor.proto=:. \
+validator.proto
