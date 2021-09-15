@@ -7,4 +7,5 @@
 
 # Build and script artefacts.
 bazel-*
+deps
 
