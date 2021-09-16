@@ -7,7 +7,7 @@ import (
 	fmt "fmt"
 	math "math"
 	proto "github.com/gogo/protobuf/proto"
-	_ "github.com/maanasasubrahmanyam-sd/go-proto-validators"
+	_ "github.com/mnsgoyal/go-proto-validators"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.

@@ -1,6 +1,6 @@
 # Golang ProtoBuf Validator Compiler
 
-[![Travis Build](https://travis-ci.org/maanasasubrahmanyam-sd/go-proto-validators.svg)](https://travis-ci.org/maanasasubrahmanyam-sd/go-proto-validators)
+[![Travis Build](https://travis-ci.org/mnsgoyal/go-proto-validators.svg)](https://travis-ci.org/mnsgoyal/go-proto-validators)
 [![Apache 2.0 License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 A `protoc` plugin that generates `Validate() error` functions on Go proto `struct`s based on field options inside `.proto`
@@ -26,7 +26,7 @@ Let's take the following `proto3` snippet:
 ```proto
 syntax = "proto3";
 package validator.examples;
-import "github.com/maanasasubrahmanyam-sd/go-proto-validators/validator.proto";
+import "github.com/mnsgoyal/go-proto-validators/validator.proto";
 
 message InnerMessage {
   // some_integer can only be in range (0, 100).
@@ -95,7 +95,7 @@ export PATH=${PATH}:${GOPATH}/bin
 Then, do the usual
 
 ```sh
-go get github.com/maanasasubrahmanyam-sd/go-proto-validators/protoc-gen-govalidators
+go get github.com/mnsgoyal/go-proto-validators/protoc-gen-govalidators
 ```
 
 Your `protoc` builds probably look very simple like:
@@ -147,7 +147,7 @@ maanasa@Maanasas-MacBook-Air go-proto-validators % export PATH="$PATH:$(go env G
 maanasa@Maanasas-MacBook-Air go-proto-validators % GO111MODULE=on PROTOBUF_VERSION=3.10.0 make regenerate
 
 
-export PATH=""/Users/maanasa/go-workspace/src/github.com/maanasasubrahmanyam-sd/go-proto-validators/"deps/bin:/Users/maanasa/go/bin":${PATH}; protoc \
+export PATH=""/Users/maanasa/go-workspace/src/github.com/mnsgoyal/go-proto-validators/"deps/bin:/Users/maanasa/go/bin":${PATH}; protoc \
 --proto_path=deps \
 --proto_path=deps/include \
 --proto_path=deps/github.com/gogo/protobuf/protobuf \

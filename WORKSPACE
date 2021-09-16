@@ -1,4 +1,4 @@
-workspace(name = "com_github_maanasasubrahmanyam-sd_go_proto_validators")
+workspace(name = "com_github_mnsgoyal_go_proto_validators")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
